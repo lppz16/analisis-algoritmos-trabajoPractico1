@@ -299,15 +299,21 @@ Ingrese los 3 elementos distintos: 1 3 4
 
 ## 6. Ejemplos de Entrada y Salida
 
-### Ejemplo 1 — Caso del enunciado
+Se presentan tres casos de prueba con distinto propósito: uno tomado directamente del enunciado, uno donde no todas las permutaciones son válidas con un conjunto diferente, y uno donde ninguna permutación es válida. Cada ejemplo incluye la salida real del programa, una explicación paso a paso y una verificación manual de la restricción.
+
+---
+
+### Ejemplo 1 — Caso del enunciado (`n=3`, `A={1,3,4}`)
+
+**Propósito:** Validar que el programa reproduce correctamente el caso de referencia provisto por los docentes.
 
 **Entrada:**
 ```
-n = 3
-A = 1 3 4
+Ingrese n (cantidad de elementos): 3
+Ingrese los 3 elementos distintos: 1 3 4
 ```
 
-**Salida:**
+**Salida real del programa:**
 ```
 === FUERZA BRUTA: Permutaciones con restriccion P[i] <= 2*P[i+1] ===
 
@@ -319,57 +325,84 @@ Total permutaciones generadas : 6
 Total permutaciones validas   : 2
 ```
 
-**Verificación manual de las 6 permutaciones:**
+**Verificación manual — las 6 permutaciones en orden lexicográfico:**
 
-| Permutación | P[0]≤2·P[1] | P[1]≤2·P[2] | ¿Válida? |
-|---|---|---|---|
-| `[1, 3, 4]` | 1 ≤ 6 ✅ | 3 ≤ 8 ✅ | ✅ |
-| `[1, 4, 3]` | 1 ≤ 8 ✅ | 4 ≤ 6 ✅ | ✅ |
-| `[3, 1, 4]` | 3 ≤ 2 ❌ | — | ❌ |
-| `[3, 4, 1]` | 3 ≤ 8 ✅ | 4 ≤ 2 ❌ | ❌ |
-| `[4, 1, 3]` | 4 ≤ 2 ❌ | — | ❌ |
-| `[4, 3, 1]` | 4 ≤ 6 ✅ | 3 ≤ 2 ❌ | ❌ |
+| # | Permutación | P[0] ≤ 2·P[1] | P[1] ≤ 2·P[2] | ¿Válida? |
+|---|---|---|---|---|
+| 1 | `[1, 3, 4]` | 1 ≤ 6 ✅ | 3 ≤ 8 ✅ | ✅ |
+| 2 | `[1, 4, 3]` | 1 ≤ 8 ✅ | 4 ≤ 6 ✅ | ✅ |
+| 3 | `[3, 1, 4]` | 3 ≤ 2 ❌ | — (cortocircuito) | ❌ |
+| 4 | `[3, 4, 1]` | 3 ≤ 8 ✅ | 4 ≤ 2 ❌ | ❌ |
+| 5 | `[4, 1, 3]` | 4 ≤ 2 ❌ | — (cortocircuito) | ❌ |
+| 6 | `[4, 3, 1]` | 4 ≤ 6 ✅ | 3 ≤ 2 ❌ | ❌ |
+
+**Nota sobre el enunciado:** el enunciado original listaba `[3, 4, 1]` como ejemplo de inválida (correcto) y sugería 3 permutaciones válidas, lo cual es un error tipográfico. La verificación manual confirma que solo existen **2 permutaciones válidas**.
 
 ---
 
-### Ejemplo 2 — Conjunto pequeño
+### Ejemplo 2 — Mezcla de válidas e inválidas (`n=4`, `A={1,2,5,10}`)
+
+**Propósito:** Probar con un conjunto donde los valores están más dispersos, generando una mayor proporción de permutaciones inválidas y permitiendo observar mejor el comportamiento del filtro.
 
 **Entrada:**
 ```
-n = 3
-A = 1 2 3
+Ingrese n (cantidad de elementos): 4
+Ingrese los 4 elementos distintos: 1 2 5 10
 ```
 
-**Salida:**
+**Salida real del programa:**
 ```
+=== FUERZA BRUTA: Permutaciones con restriccion P[i] <= 2*P[i+1] ===
+
 Permutaciones validas:
-[ 1 2 3 ]
-[ 1 3 2 ]
-[ 2 3 1 ]
+[ 1 2 5 10 ]
+[ 1 2 10 5 ]
+[ 2 1 5 10 ]
+[ 2 1 10 5 ]
+
+Total permutaciones generadas : 24
+Total permutaciones validas   : 4
+```
+
+**¿Por qué este caso es interesante?**  
+El valor `10` es grande en relación al resto. Cualquier permutación donde `10` quede en una posición `i` tal que `A[i+1]` sea pequeño (por ejemplo `[10, 1, ...]`) será inmediatamente inválida porque `10 > 2*1 = 2`. Esto ilustra cómo la restricción elimina muchas permutaciones cuando los valores del conjunto tienen grandes diferencias entre sí.
+
+---
+
+### Ejemplo 3 — Ninguna permutación válida (`n=3`, `A={1,2,10}`)
+
+**Propósito:** Mostrar el comportamiento del programa en un caso extremo donde la brecha entre el valor mayor y los demás hace que casi ninguna permutación sea válida.
+
+**Entrada:**
+```
+Ingrese n (cantidad de elementos): 3
+Ingrese los 3 elementos distintos: 1 2 10
+```
+
+**Salida real del programa:**
+```
+=== FUERZA BRUTA: Permutaciones con restriccion P[i] <= 2*P[i+1] ===
+
+Permutaciones validas:
+[ 1 2 10 ]
+[ 2 1 10 ]
 
 Total permutaciones generadas : 6
-Total permutaciones validas   : 3
-```
-
----
-
-### Ejemplo 3 — Todos válidos
-
-**Entrada:**
-```
-n = 2
-A = 1 2
-```
-
-**Salida:**
-```
-Permutaciones validas:
-[ 1 2 ]
-[ 2 1 ]   ← válida porque 2 <= 2*1
-
-Total permutaciones generadas : 2
 Total permutaciones validas   : 2
 ```
+
+**Verificación manual:**
+
+| # | Permutación | P[0] ≤ 2·P[1] | P[1] ≤ 2·P[2] | ¿Válida? |
+|---|---|---|---|---|
+| 1 | `[1, 2, 10]` | 1 ≤ 4 ✅ | 2 ≤ 20 ✅ | ✅ |
+| 2 | `[1, 10, 2]` | 1 ≤ 20 ✅ | 10 ≤ 4 ❌ | ❌ |
+| 3 | `[2, 1, 10]` | 2 ≤ 2 ✅ | 1 ≤ 20 ✅ | ✅ |
+| 4 | `[2, 10, 1]` | 2 ≤ 20 ✅ | 10 ≤ 2 ❌ | ❌ |
+| 5 | `[10, 1, 2]` | 10 ≤ 2 ❌ | — (cortocircuito) | ❌ |
+| 6 | `[10, 2, 1]` | 10 ≤ 4 ❌ | — (cortocircuito) | ❌ |
+
+**Conclusión:** Solo 2 de 6 permutaciones son válidas. El valor `10` solo puede aparecer en la última posición, ya que si queda en posición `i`, necesita que `A[i+1] ≥ 5`, y en este conjunto solo `10` cumple eso — lo cual crearía un ciclo imposible. Esto ilustra cómo valores con grandes brechas entre sí restringen fuertemente las combinaciones posibles.
 
 ---
 
@@ -423,11 +456,6 @@ Los tiempos fueron medidos en un **MacBook (Apple Silicon)** usando `std::chrono
 | 10 | 3,628,800 | 25.45 ms |
 | 11 | 39,916,800 | 119.02 ms |
 | 12 | 479,001,600 | 1,273.65 ms |
-
-**Screenshot:**
-
-<img width="690" height="227" alt="Captura de pantalla 2026-04-03 a la(s) 9 23 45 p m" src="https://github.com/user-attachments/assets/32eb5d16-f548-477e-9352-d3306a7c8f61" />
-
 
 **Observaciones:**
 - De `n=10` a `n=11` el tiempo se multiplica ~×4.7, consistente con el salto de 10! a 11! (factor 11).
