@@ -69,31 +69,161 @@ Se eligió `std::next_permutation` de la STL por las siguientes razones:
 
 ## 3. Pseudocódigo
 
+### 3.1 Pseudocódigo del enunciado (referencia oficial)
+
+El siguiente pseudocódigo fue suministrado por los docentes como guía base (Trabajo Práctico 01, Universidad EAFIT, 2025):
+
 ```
-ENTRADA: n entero, A[0..n-1] arreglo de enteros distintos
+leer n
+leer A[0..n-1]
+ordenar A asc
+total_generadas = 0
+total_validas = 0
 
-ORDENAR A ascendentemente          // garantiza empezar desde la permutación mínima
-total_generadas ← 0
-total_validas   ← 0
+hacer:
+    total_generadas += 1
+    valida = verdadero
+    para i en [0..n-2]:
+        si A[i] > 2 * A[i+1]:
+            valida = falso
+            break
+    si valida:
+        imprimir A
+        total_validas += 1
 
-REPETIR:
-    total_generadas ← total_generadas + 1
-    valida ← verdadero
+mientras next_permutation(A) exista
 
+imprimir "total_generadas =", total_generadas
+imprimir "total_validas =", total_validas
+```
+
+---
+
+### 3.2 Pseudocódigo de nuestra solución en C++
+
+El pseudocódigo a continuación describe **exactamente** la estructura y lógica de nuestro `main.cpp`. La solución se organiza en cuatro funciones bien separadas, cada una con responsabilidad única:
+
+---
+
+#### Función `esValida(perm)`
+Recibe una permutación completa y evalúa si cumple la restricción en todos sus pares consecutivos.
+
+```
+FUNCIÓN esValida(perm[0..n-1]) → booleano
     PARA i DESDE 0 HASTA n-2:
-        SI A[i] > 2 * A[i+1]:
-            valida ← falso
-            ROMPER
-
-    SI valida:
-        IMPRIMIR A
-        total_validas ← total_validas + 1
-
-MIENTRAS next_permutation(A) exista
-
-IMPRIMIR "Total generadas: ", total_generadas
-IMPRIMIR "Total validas:   ", total_validas
+        SI perm[i] > 2 * perm[i+1]:
+            // Restricción violada: no hace falta seguir revisando
+            RETORNAR falso
+    // Todos los pares pasaron la restricción
+    RETORNAR verdadero
+FIN FUNCIÓN
 ```
+
+---
+
+#### Función `imprimirPerm(perm)`
+Muestra una permutación en pantalla con formato `[ x1 x2 ... xn ]`.
+
+```
+FUNCIÓN imprimirPerm(perm[0..n-1])
+    IMPRIMIR "[ "
+    PARA CADA elemento x EN perm:
+        IMPRIMIR x, " "
+    IMPRIMIR "]"
+FIN FUNCIÓN
+```
+
+---
+
+#### Función `fuerzaBruta(A, imprimirValidas)`
+Núcleo del algoritmo. Genera exhaustivamente todas las permutaciones de A usando
+`next_permutation` y aplica el filtro sobre cada una.
+
+```
+FUNCIÓN fuerzaBruta(A[0..n-1], imprimirValidas: booleano)
+    ORDENAR A ascendentemente
+    // Garantiza que next_permutation recorra exactamente n! permutaciones,
+    // comenzando desde la permutación lexicográficamente menor.
+
+    total_generadas ← 0
+    total_validas   ← 0
+
+    REPETIR:                              // do-while: evalúa antes de avanzar
+        total_generadas ← total_generadas + 1
+
+        SI esValida(A):                   // delega la verificación a esValida()
+            total_validas ← total_validas + 1
+            SI imprimirValidas:
+                imprimirPerm(A)           // solo imprime en modo interactivo
+
+    MIENTRAS next_permutation(A) retorne VERDADERO
+    // next_permutation reorganiza A en la siguiente permutación lexicográfica.
+    // Retorna FALSO cuando A vuelve al estado mínimo → se agotaron las n! permutaciones.
+
+    SI imprimirValidas:
+        IMPRIMIR "Total permutaciones generadas : ", total_generadas
+        IMPRIMIR "Total permutaciones validas   : ", total_validas
+FIN FUNCIÓN
+```
+
+---
+
+#### Función `medirTiempo(A)`
+Envuelve `fuerzaBruta()` con un cronómetro de alta resolución para medir el
+tiempo de ejecución sin contaminar la salida con permutaciones.
+
+```
+FUNCIÓN medirTiempo(A[0..n-1]) → real (milisegundos)
+    inicio ← reloj_alta_resolución()
+    fuerzaBruta(A, imprimirValidas=falso)   // ejecuta sin imprimir nada
+    fin    ← reloj_alta_resolución()
+    RETORNAR (fin - inicio) en milisegundos
+FIN FUNCIÓN
+```
+
+---
+
+#### Función `main()`
+Punto de entrada. Orquesta la lectura de datos, la ejecución interactiva y
+las pruebas de tiempo experimentales.
+
+```
+FUNCIÓN main()
+    // ── Modo interactivo ──────────────────────────────────────────────────
+    LEER n
+    LEER A[0..n-1]
+
+    fuerzaBruta(A, imprimirValidas=verdadero)
+
+    // ── Medición experimental de tiempos ─────────────────────────────────
+    IMPRIMIR encabezado de tabla: n | n! | Tiempo(ms)
+
+    PARA CADA valor ni EN {8, 10, 11, 12}:
+        prueba ← {1, 2, 3, ..., ni}        // arreglo de referencia
+
+        factorial ← 1
+        PARA j DESDE 1 HASTA ni:
+            factorial ← factorial * j      // calcular ni! para mostrar en tabla
+
+        tiempo ← medirTiempo(prueba)
+        IMPRIMIR ni, factorial, tiempo
+
+FIN FUNCIÓN
+```
+
+---
+
+### 3.3 Relación entre el pseudocódigo del enunciado y nuestra implementación
+
+| Elemento del enunciado | Cómo lo resolvimos en C++ |
+|---|---|
+| `leer n` / `leer A[0..n-1]` | `cin >> n` y loop de lectura en `main()` |
+| `ordenar A asc` | `sort(A.begin(), A.end())` al inicio de `fuerzaBruta()` |
+| Verificación `A[i] > 2*A[i+1]` | Función separada `esValida()` con cortocircuito |
+| `imprimir A` si válida | Función separada `imprimirPerm()` |
+| `next_permutation(A)` | `std::next_permutation` de `<algorithm>` en ciclo `do-while` |
+| Contadores y reporte final | Variables `total_generadas` y `total_validas` en `fuerzaBruta()` |
+| Medición de tiempos | Función adicional `medirTiempo()` con `std::chrono` — no estaba en el enunciado base, fue incorporada para el análisis experimental requerido en la actividad |
 
 ---
 
