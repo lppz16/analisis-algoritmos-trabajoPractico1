@@ -1,10 +1,10 @@
 # Ejercicio 1 — Permutaciones con Restricciones (Fuerza Bruta)
 
 **Curso:** Análisis y Diseño de Algoritmos — Universidad EAFIT  
-**Docente:** Carlos Alberto Alvarez Henao
-**Estudiante 1:** Yan Frank Ríos López
-**Estudiante 2:** Juan Esteban 
-**Estudiante 3:** 
+**Docente:** Carlos Alberto Alvarez Henao  
+**Estudiante 1:** Yan Frank Ríos López  
+**Estudiante 2:** Juan Esteban  
+**Estudiante 3:**   
 **Trabajo Práctico 01 | Ejercicio 1 (7.5%)**  
 **Enfoque:** Fuerza Bruta con `next_permutation`
 
