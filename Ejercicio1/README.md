@@ -421,6 +421,7 @@ Los tiempos fueron medidos en un **MacBook (Apple Silicon)** usando `std::chrono
 | 12 | 479,001,600 | 1,273.65 ms |
 
 **Screenshot:**
+
 <img width="690" height="227" alt="Captura de pantalla 2026-04-03 a la(s) 9 23 45 p m" src="https://github.com/user-attachments/assets/32eb5d16-f548-477e-9352-d3306a7c8f61" />
 
 **Observaciones:**
