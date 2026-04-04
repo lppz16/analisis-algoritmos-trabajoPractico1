@@ -424,6 +424,7 @@ Los tiempos fueron medidos en un **MacBook (Apple Silicon)** usando `std::chrono
 
 <img width="690" height="227" alt="Captura de pantalla 2026-04-03 a la(s) 9 23 45 p m" src="https://github.com/user-attachments/assets/32eb5d16-f548-477e-9352-d3306a7c8f61" />
 
+
 **Observaciones:**
 - De `n=10` a `n=11` el tiempo se multiplica ~×4.7, consistente con el salto de 10! a 11! (factor 11).
 - De `n=11` a `n=12` el tiempo se multiplica ~×10.7, consistente con el factor 12.
