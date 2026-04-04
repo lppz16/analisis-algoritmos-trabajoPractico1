@@ -3,8 +3,8 @@
 **Curso:** Análisis y Diseño de Algoritmos — Universidad EAFIT  
 **Docente:** Carlos Alberto Alvarez Henao  
 **Estudiante 1:** Yan Frank Ríos López  
-**Estudiante 2:** Juan Esteban  
-**Estudiante 3:**   
+**Estudiante 2:** Juan Esteban Jiménez  
+**Estudiante 3:** Juan José Garcia  
 **Trabajo Práctico 01 | Ejercicio 1 (7.5%)**  
 **Enfoque:** Fuerza Bruta con `next_permutation`
 
