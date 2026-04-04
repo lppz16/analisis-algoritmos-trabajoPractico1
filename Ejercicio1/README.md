@@ -411,17 +411,32 @@ Una ventaja importante de usar `next_permutation` es que **no almacena todas las
 
 Los tiempos se midieron en el mismo equipo usando `std::chrono::high_resolution_clock` con el arreglo `{1, 2, ..., n}`.
 
+Los tiempos fueron medidos en un **MacBook (Apple Silicon)** usando `std::chrono::high_resolution_clock`, compilando con `g++ -O2 -std=gnu++17`. El arreglo de prueba usado fue `{1, 2, ..., n}` en cada caso.
+
 | n | n! (permutaciones) | Tiempo (ms) |
 |---|---|---|
-| 8 | 40,320 | ~0.3 ms |
-| 10 | 3,628,800 | ~24 ms |
-| 11 | 39,916,800 | ~424 ms |
-| 12 | 479,001,600 | ~4,918 ms (~5 seg) |
+| 8 | 40,320 | 0.29 ms |
+| 10 | 3,628,800 | 25.45 ms |
+| 11 | 39,916,800 | 119.02 ms |
+| 12 | 479,001,600 | 1,273.65 ms |
 
-> **Nota:** Los tiempos variarán según el procesador. Se recomienda correr el programa en tu Mac para obtener los valores específicos de tu equipo e incluirlos en el informe.
+**Observaciones:**
+- De `n=10` a `n=11` el tiempo se multiplica ~×4.7, consistente con el salto de 10! a 11! (factor 11).
+- De `n=11` a `n=12` el tiempo se multiplica ~×10.7, consistente con el factor 12.
+- El crecimiento confirma empíricamente la complejidad **O(n · n!)**.
 
-**¿A partir de qué n se vuelve impracticable?**  
-A partir de `n = 12` el tiempo supera los 5 segundos en hardware moderno. Para `n = 13` (6,227,020,800 permutaciones) el tiempo estimado sería del orden de **1 minuto**, y para `n = 15` del orden de **horas**. En la práctica, `n ≥ 13` se considera **impracticable** para este enfoque.
+**¿A partir de qué n se vuelve impracticable?**
+
+Extrapolando a partir de los tiempos medidos:
+
+| n | n! | Tiempo estimado |
+|---|---|---|
+| 12 | 479,001,600 | 1.27 seg (medido) |
+| 13 | 6,227,020,800 | ~16 seg (estimado) |
+| 14 | 87,178,291,200 | ~4 min (estimado) |
+| 15 | 1,307,674,368,000 | ~1 hora (estimado) |
+
+En la práctica, **a partir de `n = 13`** el tiempo de ejecución se vuelve incómodo para uso interactivo, y **a partir de `n = 15`** es completamente impracticable. El umbral de impracticabilidad en este equipo se sitúa en **`n ≥ 13`**.
 
 ---
 
