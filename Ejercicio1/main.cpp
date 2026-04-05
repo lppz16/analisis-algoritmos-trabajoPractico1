@@ -70,24 +70,14 @@ int main() {
     cout << "\n=== FUERZA BRUTA: Permutaciones con restriccion P[i] <= 2*P[i+1] ===" << endl;
     fuerzaBruta(A, true);
 
-    // --- Medicion experimental de tiempos ---
+    // --- Medicion de tiempos ---
     cout << "\n=== MEDICION DE TIEMPOS (ms) ===" << endl;
-    cout << left << setw(6) << "n" << setw(15) << "Permutaciones" << "Tiempo (ms)" << endl;
-    cout << string(40, '-') << endl;
-
-    // Probamos con n = 8, 10, 11, 12 usando {1,2,...,n}
-    vector<int> ns = {8, 10, 11, 12};
-    for (int ni : ns) {
-        vector<int> prueba(ni);
-        for (int i = 0; i < ni; i++) prueba[i] = i + 1;
-
-        // Calcular n!
-        long long fact = 1;
-        for (int i = 1; i <= ni; i++) fact *= i;
-
-        double tiempo = medirTiempo(prueba);
-        cout << left << setw(6) << ni << setw(15) << fact << fixed << setprecision(2) << tiempo << " ms" << endl;
-    }
+    // Medir el tiempo de la ejecución real con las permutaciones actuales (A mezclado)
+    auto inicio_actual = high_resolution_clock::now();
+    fuerzaBruta(A, true);
+    auto fin_actual = high_resolution_clock::now();
+    double tiempo_actual = duration<double, milli>(fin_actual - inicio_actual).count();
+    cout << "\nTiempo total (perm. actual): " << fixed << setprecision(2) << tiempo_actual << " ms" << endl;
 
     return 0;
 }

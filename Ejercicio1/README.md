@@ -199,18 +199,23 @@ FUNCIÓN main()
 
     fuerzaBruta(A, imprimirValidas=verdadero)
 
-    // ── Medición experimental de tiempos ─────────────────────────────────
-    IMPRIMIR encabezado de tabla: n | n! | Tiempo(ms)
-
-    PARA CADA valor ni EN {8, 10, 11, 12}:
-        prueba ← {1, 2, 3, ..., ni}        // arreglo de referencia
-
-        factorial ← 1
-        PARA j DESDE 1 HASTA ni:
-            factorial ← factorial * j      // calcular ni! para mostrar en tabla
-
-        tiempo ← medirTiempo(prueba)
-        IMPRIMIR ni, factorial, tiempo
+    // --- Medición de tiempos ---
+    IMPRIMIR "=== MEDICION DE TIEMPOS (ms) ==="
+    
+    // Iniciar cronómetro
+    inicio_actual ← reloj_alta_resolucion()
+    
+    // Ejecutar fuerza bruta sobre A mostrando permutaciones válidas
+    fuerzaBruta(A, verdadero)
+    
+    // Detener cronómetro
+    fin_actual ← reloj_alta_resolucion()
+    
+    // Calcular tiempo transcurrido en milisegundos
+    tiempo_actual ← convertir_a_milisegundos(fin_actual - inicio_actual)
+    
+    // Mostrar tiempo total con 2 decimales
+    IMPRIMIR "Tiempo total (perm. actual): ", FORMATO_2_DECIMALES(tiempo_actual), " ms"
 
 FIN FUNCIÓN
 ```
@@ -450,37 +455,44 @@ Los tiempos se midieron en el mismo equipo usando `std::chrono::high_resolution_
 
 Los tiempos fueron medidos en un **MacBook (Apple Silicon)** usando `std::chrono::high_resolution_clock`, compilando con `g++ -O2 -std=gnu++17`. El arreglo de prueba usado fue `{1, 2, ..., n}` en cada caso.
 
-| n | n! (permutaciones) | Tiempo (ms) |
-|---|---|---|
-| 8 | 40,320 | 0.29 ms |
-| 10 | 3,628,800 | 25.45 ms |
-| 11 | 39,916,800 | 119.02 ms |
-| 12 | 479,001,600 | 1,273.65 ms |
+| n  | n! (permutaciones) | Tiempo (ms) |
+|----|--------------------|---|
+| 7  | 5040               | 470.05 ms |
+| 8  | 40,320             | 2253.88 ms |
+| 9  | 362,880            | 11700.99 ms |
 
 
-**Screenshot:**
 
-<img width="690" height="227" alt="Captura de pantalla 2026-04-03 a la(s) 9 23 45 p m" src="https://github.com/user-attachments/assets/3386216a-2346-4a73-80d4-653c3aa88fc2" />
 
 
 
 **Observaciones:**
-- De `n=10` a `n=11` el tiempo se multiplica ~×4.7, consistente con el salto de 10! a 11! (factor 11).
-- De `n=11` a `n=12` el tiempo se multiplica ~×10.7, consistente con el factor 12.
-- El crecimiento confirma empíricamente la complejidad **O(n · n!)**.
+tiempo crece proporcionalmente al factorial:
+
+**T(n)≈k⋅n!**
+
+Podemos estimar usando la relación entre factoriales:
+
+**(n+1)!=(n+1)⋅n!**
+
+Eso significa:
+
+**T(n+1)≈(n+1)⋅T(n)**
 
 **¿A partir de qué n se vuelve impracticable?**
 
 Extrapolando a partir de los tiempos medidos:
 
-| n | n! | Tiempo estimado |
-|---|---|---|
-| 12 | 479,001,600 | 1.27 seg (medido) |
-| 13 | 6,227,020,800 | ~16 seg (estimado) |
-| 14 | 87,178,291,200 | ~4 min (estimado) |
-| 15 | 1,307,674,368,000 | ~1 hora (estimado) |
+| n  | n!          | Tiempo en ms   | Tiempo     | Observación |
+|----|-------------|----------------|------------|-------------|
+| 9  | 362,880     | 11700.99 ms    | 11,7 seg   | medido      |
+| 10 | 3,628,800   | ~117009.9 ms   | 1,95 min   | estimado    |
+| 11 | 39,916,800  | ~1287108.9 ms  | 21,5 min   | estimado    |
+| 12 | 479,001,600 | ~15445306.8 ms | 4.29 horas | estimado    |
 
-En la práctica, **a partir de `n = 13`** el tiempo de ejecución se vuelve incómodo para uso interactivo, y **a partir de `n = 15`** es completamente impracticable. El umbral de impracticabilidad en este equipo se sitúa en **`n ≥ 13`**.
+
+
+En la práctica, **a partir de `n = 12`** el tiempo de ejecución se vuelve incómodo para uso interactivo, y **a partir de `n = 13`** es completamente impracticable. El umbral de impracticabilidad en este equipo se sitúa en **`n ≥ 13`**.
 
 ---
 
