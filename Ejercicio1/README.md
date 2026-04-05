@@ -193,32 +193,20 @@ las pruebas de tiempo experimentales.
 
 ```
 FUNCIÓN main()
-    // ── Modo interactivo ──────────────────────────────────────────────────
     LEER n
     LEER A[0..n-1]
 
-    fuerzaBruta(A, imprimirValidas=verdadero)
-
-    // --- Medición de tiempos ---
-    IMPRIMIR "=== MEDICION DE TIEMPOS (ms) ==="
-    
-    // Iniciar cronómetro
-    inicio_actual ← reloj_alta_resolucion()
-    
-    // Ejecutar fuerza bruta sobre A mostrando permutaciones válidas
+    IMPRIMIR "=== FUERZA BRUTA: Permutaciones con restriccion P[i] <= 2*P[i+1] ==="
     fuerzaBruta(A, verdadero)
-    
-    // Detener cronómetro
-    fin_actual ← reloj_alta_resolucion()
-    
-    // Calcular tiempo transcurrido en milisegundos
-    tiempo_actual ← convertir_a_milisegundos(fin_actual - inicio_actual)
-    
-    // Mostrar tiempo total con 2 decimales
-    IMPRIMIR "Tiempo total (perm. actual): ", FORMATO_2_DECIMALES(tiempo_actual), " ms"
 
+    IMPRIMIR "=== MEDICION DE TIEMPOS (ms) ==="
+    tiempo_actual ← medirTiempo(A)
+
+    IMPRIMIR "Tiempo total (perm. actual): ", FORMATO_2_DECIMALES(tiempo_actual), " ms"
 FIN FUNCIÓN
 ```
+
+Lee n y el arreglo del usuario, ejecuta el algoritmo en modo interactivo e imprime las permutaciones válidas. Luego mide el tiempo de ejecución sobre ese mismo arreglo sin volver a imprimir las permutaciones.
 
 ---
 
@@ -232,7 +220,7 @@ FIN FUNCIÓN
 | `imprimir A` si válida | Función separada `imprimirPerm()` |
 | `next_permutation(A)` | `std::next_permutation` de `<algorithm>` en ciclo `do-while` |
 | Contadores y reporte final | Variables `total_generadas` y `total_validas` en `fuerzaBruta()` |
-| Medición de tiempos | Función adicional `medirTiempo()` con `std::chrono` — no estaba en el enunciado base, fue incorporada para el análisis experimental requerido en la actividad |
+| Medición de tiempos | Función adicional `medirTiempo()` con `std::chrono`, usada para medir el tiempo de ejecución del mismo arreglo ingresado por el usuario sin volver a imprimir las permutaciones |
 
 ---
 
@@ -271,7 +259,7 @@ Envuelve `fuerzaBruta()` con un cronómetro de alta resolución (`std::chrono::h
 ```cpp
 int main()
 ```
-Lee `n` y el arreglo del usuario, ejecuta el algoritmo interactivo y luego corre automáticamente las pruebas de tiempo para `n = {8, 10, 11, 12}`.
+Lee `n` y el arreglo del usuario, ejecuta el algoritmo interactivo mostrando las permutaciones válidas y luego mide el tiempo de ejecución sobre ese mismo arreglo sin volver a imprimirlas.
 
 ---
 
@@ -328,6 +316,9 @@ Permutaciones validas:
 
 Total permutaciones generadas : 6
 Total permutaciones validas   : 2
+
+=== MEDICION DE TIEMPOS (ms) ===
+Tiempo total (perm. actual): X.XX ms
 ```
 
 **Verificación manual — las 6 permutaciones en orden lexicográfico:**
@@ -367,6 +358,9 @@ Permutaciones validas:
 
 Total permutaciones generadas : 24
 Total permutaciones validas   : 4
+
+=== MEDICION DE TIEMPOS (ms) ===
+Tiempo total (perm. actual): X.XX ms
 ```
 
 **¿Por qué este caso es interesante?**  
@@ -451,48 +445,18 @@ Una ventaja importante de usar `next_permutation` es que **no almacena todas las
 
 ## 8. Medición Experimental de Tiempos
 
-Los tiempos se midieron en el mismo equipo usando `std::chrono::high_resolution_clock` con el arreglo `{1, 2, ..., n}`.
 
-Los tiempos fueron medidos en un **MacBook (Apple Silicon)** usando `std::chrono::high_resolution_clock`, compilando con `g++ -O2 -std=gnu++17`. El arreglo de prueba usado fue `{1, 2, ..., n}` en cada caso.
+La versión actual del programa mide el tiempo de ejecución del algoritmo sobre el mismo arreglo ingresado por el usuario. Para ello, se utiliza la función `medirTiempo(A)`, que ejecuta `fuerzaBruta(A, false)` entre dos capturas de tiempo tomadas con `std::chrono::high_resolution_clock`.
 
-| n  | n! (permutaciones) | Tiempo (ms) |
-|----|--------------------|---|
-| 7  | 5040               | 470.05 ms |
-| 8  | 40,320             | 2253.88 ms |
-| 9  | 362,880            | 11700.99 ms |
+Esto permite reportar el tiempo total sin volver a imprimir las permutaciones válidas.
 
+**Salida adicional del programa:**
 
+=== MEDICION DE TIEMPOS (ms) ===
+Tiempo total (perm. actual): X.XX ms
 
-
-
-
-**Observaciones:**
-tiempo crece proporcionalmente al factorial:
-
-**T(n)≈k⋅n!**
-
-Podemos estimar usando la relación entre factoriales:
-
-**(n+1)!=(n+1)⋅n!**
-
-Eso significa:
-
-**T(n+1)≈(n+1)⋅T(n)**
-
-**¿A partir de qué n se vuelve impracticable?**
-
-Extrapolando a partir de los tiempos medidos:
-
-| n  | n!          | Tiempo en ms   | Tiempo     | Observación |
-|----|-------------|----------------|------------|-------------|
-| 9  | 362,880     | 11700.99 ms    | 11,7 seg   | medido      |
-| 10 | 3,628,800   | ~117009.9 ms   | 1,95 min   | estimado    |
-| 11 | 39,916,800  | ~1287108.9 ms  | 21,5 min   | estimado    |
-| 12 | 479,001,600 | ~15445306.8 ms | 4.29 horas | estimado    |
-
-
-
-En la práctica, **a partir de `n = 12`** el tiempo de ejecución se vuelve incómodo para uso interactivo, y **a partir de `n = 13`** es completamente impracticable. El umbral de impracticabilidad en este equipo se sitúa en **`n ≥ 13`**.
+**Nota:**  
+Desde el punto de vista teórico, el algoritmo se vuelve rápidamente costoso porque debe recorrer `n!` permutaciones. Por ello, aunque para tamaños pequeños el tiempo puede ser bajo, a partir de valores moderados de `n` el crecimiento factorial hace que la ejecución se vuelva impracticable en equipos convencionales. Para determinar el umbral exacto en un equipo específico, es necesario realizar mediciones experimentales adicionales con distintas entradas.
 
 ---
 
@@ -508,12 +472,7 @@ Porque el algoritmo **genera primero y filtra después**: construye cada permuta
 
 La proporción **disminuye** a medida que `n` crece. Con más elementos, la probabilidad de que una permutación aleatoria cumpla `P[i] <= 2*P[i+1]` en **todas** las posiciones consecutivas se reduce, porque la restricción debe satisfacerse simultáneamente en `n-1` pares. Experimentalmente:
 
-| n | Total | Válidas (aprox.) | Proporción |
-|---|---|---|---|
-| 2 | 2 | 2 | 100% |
-| 3 | 6 | 3 | ~50% |
-| 4 | 24 | 8–10 | ~35–40% |
-| 5 | 120 | ~25–30 | ~20–25% |
+La proporción de permutaciones válidas depende no solo de `n`, sino también de los valores concretos del conjunto. En general, a medida que `n` crece y la restricción debe cumplirse en más pares consecutivos, es esperable que la proporción de permutaciones válidas disminuya. Sin embargo, no existe una proporción fija determinada únicamente por `n`, ya que distintos conjuntos del mismo tamaño pueden producir cantidades muy diferentes de permutaciones válidas.
 
 ---
 
