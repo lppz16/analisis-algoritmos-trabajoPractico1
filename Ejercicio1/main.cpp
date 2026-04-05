@@ -72,12 +72,9 @@ int main() {
 
     // --- Medicion de tiempos ---
     cout << "\n=== MEDICION DE TIEMPOS (ms) ===" << endl;
-    // Medir el tiempo de la ejecución real con las permutaciones actuales (A mezclado)
-    auto inicio_actual = high_resolution_clock::now();
-    fuerzaBruta(A, true);
-    auto fin_actual = high_resolution_clock::now();
-    double tiempo_actual = duration<double, milli>(fin_actual - inicio_actual).count();
-    cout << "\nTiempo total (perm. actual): " << fixed << setprecision(2) << tiempo_actual << " ms" << endl;
-
+    double tiempo_actual = medirTiempo(A);
+    cout << "Tiempo total (perm. actual): " << fixed << setprecision(2)
+         << tiempo_actual << " ms" << endl;
+         
     return 0;
 }
